@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RockArgento - El Universo del Rock Nacional</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #e5e5e5;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, .font-display {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #ff006e 0%, #8338ec 50%, #3a86ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .vinyl-spin {
+            animation: spin 4s linear infinite;
+            animation-play-state: paused;
+        }
+        .vinyl-spin:hover {
+            animation-play-state: running;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .timeline-line {
+            background: linear-gradient(to bottom, #ff006e, #8338ec, #3a86ff);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .hover-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(255, 0, 110, 0.2);
+        }
+        .map-pin {
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .lyrics-highlight {
+            background: linear-gradient(120deg, rgba(255,0,110,0.3) 0%, rgba(255,0,110,0) 100%);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .connection-line {
+            stroke-dasharray: 5,5;
+            animation: dash 20s linear infinite;
+        }
+        @keyframes dash {
+            to { stroke-dashoffset: -100; }
+        }
+        .tab-active {
+            border-bottom: 2px solid #ff006e;
+            color: #ff006e;
+        }
+        .scroll-hidden::-webkit-scrollbar {
+            display: none;
+        }
+        .scroll-hidden {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Noise Overlay -->
+    <div class="noise"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-40 glass-panel border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="disc" class="w-8 h-8 text-pink-500"></i>
+                    <span class="font-display text-2xl font-bold tracking-tighter">Rock<span class="text-pink-500">Argento</span></span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#timeline" class="hover:text-pink-500 transition-colors">Línea de Tiempo</a>
+                    <a href="#arbol" class="hover:text-pink-500 transition-colors">Árbol Genealógico</a>
+                    <a href="#mapa" class="hover:text-pink-500 transition-colors">Mapa</a>
+                    <a href="#diccionario" class="hover:text-pink-500 transition-colors">Diccionario</a>
+                    <a href="#vinilos" class="hover:text-pink-500 transition-colors">Arte</a>
+                    <a href="#coleccionista" class="hover:text-pink-500 transition-colors">Comunidad</a>
+                </div>
+                <button onclick="generarNombreBanda()" class="bg-pink-600 hover:bg-pink-700 px-4 py-2 rounded-full text-sm font-medium transition-all hover:scale-105">
+                    Generar Nombre de Banda
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
+        <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-black to-pink-900/20"></div>
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-pink-600/20 rounded-full blur-3xl animate-pulse"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        </div>
+        
+        <div class="relative z-10 max-w-7xl mx-auto px-4 text-center">
+            <div class="inline-block mb-4 px-4 py-1 rounded-full border border-pink-500/30 bg-pink-500/10 text-pink-400 text-sm font-medium">
+                Desde "La Balsa" hasta hoy
+            </div>
+            <h1 class="text-6xl md:text-8xl font-bold mb-6 leading-tight">
+                El <span class="gradient-text">Rock Nacional</span><br>
+                es inmortal
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto mb-12">
+                Explora la historia, los lugares míticos, las conexiones entre artistas y el léxico único del rock argentino. Un viaje desde los 60s hasta la escena indie actual.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="document.getElementById('timeline').scrollIntoView({behavior: 'smooth'})" class="bg-white text-black px-8 py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform flex items-center justify-center gap-2">
+                    <i data-lucide="play-circle" class="w-5 h-5"></i>
+                    Comenzar Viaje
+                </button>
+                <button onclick="document.getElementById('arbol').scrollIntoView({behavior: 'smooth'})" class="glass-panel px-8 py-4 rounded-full font-bold text-lg hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="git-branch" class="w-5 h-5"></i>
+                    Ver Conexiones
+                </button>
+            </div>
+        </div>
+
+        <!-- Floating Elements -->
+        <div class="absolute bottom-10 left-10 hidden lg:block opacity-50">
+            <div class="vinyl-spin w-32 h-32 rounded-full bg-gradient-to-br from-gray-800 to-black border-4 border-gray-700 flex items-center justify-center">
+                <div class="w-12 h-12 rounded-full bg-pink-500/20 border-2 border-pink-500"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Línea de Tiempo Interactiva -->
+    <section id="timeline" class="py-24 relative">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">Línea de Tiempo</h2>
+                <p class="text-gray-400 text-lg">Navega por las décadas que definieron el rock argentino</p>
+                
+                <!-- Filtros de Décadas -->
+                <div class="flex flex-wrap justify-center gap-2 mt-8" id="decadeFilters">
+                    <button onclick="filterTimeline('all')" class="decade-btn px-6 py-2 rounded-full border border-white/20 hover:border-pink-500 hover:text-pink-500 transition-all bg-white/5" data-decade="all">Todas</button>
+                    <button onclick="filterTimeline('60s')" class="decade-btn px-6 py-2 rounded-full border border-white/20 hover:border-pink-500 hover:text-pink-500 transition-all" data-decade="60s">60s</button>
+                    <button onclick="filterTimeline('70s')" class="decade-btn px-6 py-2 rounded-full border border-white/20 hover:border-pink-500 hover:text-pink-500 transition-all" data-decade="70s">70s</button>
+                    <button onclick="filterTimeline('80s')" class="decade-btn px-6 py-2 rounded-full border border-white/20 hover:border-pink-500 hover:text-pink-500 transition-all" data-decade="80s">80s</button>
+                    <button onclick="filterTimeline('90s')" class="decade-btn px-6 py-2 rounded-full border border-white/20 hover:border-pink-500 hover:text-pink-500 transition-all" data-decade="90s">90s</button>
+                    <button onclick="filterTimeline('00s')" class="decade-btn px-6 py-2 rounded-full border border-white/20 hover:border-pink-500 hover:text-pink-500 transition-all" data-decade="00s">00s</button>
+                    <button onclick="filterTimeline('actual')" class="decade-btn px-6 py-2 rounded-full border border-white/20 hover:border-pink-500 hover:text-pink-500 transition-all" data-decade="actual">Actualidad</button>
+                </div>
+            </div>
+
+            <div class="relative">
+                <!-- Línea central -->
+                <div class="absolute left-1/2 transform -translate-x-1/2 w-1 h-full timeline-line rounded-full hidden md:block"></div>
+
+                <!-- Eventos -->
+                <div class="space-y-12" id="timelineContainer">
+                    <!-- 1967 - La Balsa -->
+                    <div class="timeline-item" data-decade="60s">
+                        <div class="grid md:grid-cols-2 gap-8 items-center">
+                            <div class="md:text-right order-2 md:order-1">
+                                <div class="glass-panel p-6 rounded-2xl hover-lift cursor-pointer" onclick="showEventDetail('balsa')">
+                                    <span class="text-pink-500 font-bold text-sm">1967</span>
+                                    <h3 class="text-2xl font-bold mt-2 mb-2">"La Balsa" - El Big Bang</h3>
+                                    <p class="text-gray-400 text-sm">Los Gatos lanzan el single que funda el rock en español. Litto Nebbia y la trinidad fundacional (Los Gatos, Almendra, Manal) establecen las bases.</p>
+                                    <div class="mt-4 flex justify-end gap-2">
+                                        <span class="px-3 py-1 bg-pink-500/20 rounded-full text-xs text-pink-400">Los Gatos</span>
+                                        <span class="px-3 py-1 bg-purple-500/20 rounded-full text-xs text-purple-400">Almendra</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="order-1 md:order-2 flex justify-center">
+                                <div class="w-16 h-16 rounded-full bg-pink-600 flex items-center justify-center z-10 border-4 border-black">
+                                    <i data-lucide="disc" class="w-8 h-8 text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 1972 - Sui Generis -->
+                    <div class="timeline-item" data-decade="70s">
+                        <div class="grid md:grid-cols-2 gap-8 items-center">
+                            <div class="flex justify-center">
+                                <div class="w-16 h-16 rounded-full bg-purple-600 flex items-center justify-center z-10 border-4 border-black">
+                                    <i data-lucide="users" class="w-8 h-8 text-white"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="glass-panel p-6 rounded-2xl hover-lift cursor-pointer" onclick="showEventDetail('suigeneris')">
+                                    <span class="text-purple-500 font-bold text-sm">1972</span>
+                                    <h3 class="text-2xl font-bold mt-2 mb-2">Sui Generis y la Generación Setentista</h3>
+                                    <p class="text-gray-400 text-sm">Charly García y Nito Mestre forman el dúo que definirá la sensibilidad del rock argentino. Surgen Pescado Rabioso (Spinetta), Invisible, y La Máquina de Hacer Pájaros.</p>
+                                    <div class="mt-4 flex gap-2">
+                                        <span class="px-3 py-1 bg-pink-500/20 rounded-full text-xs text-pink-400">Charly García</span>
+                                        <span class="px-3 py-1 bg-blue-500/20 rounded-full text-xs text-blue-400">Folk Rock</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 1976-1983 - Dictadura -->
+                    <div class="timeline-item" data-decade="70s">
+                        <div class="grid md:grid-cols-2 gap-8 items-center">
+                            <div class="md:text-right order-2 md:order-1">
+                                <div class="glass-panel p-6 rounded-2xl hover-lift cursor-pointer border-red-500/30" onclick="showEventDetail('dictadura')">
+                                    <span class="text-red-500 font-bold text-sm">1976-1983</span>
+                                    <h3 class="text-2xl font-bold mt-2 mb-2">Rock bajo la Dictadura</h3>
+                                    <p class="text-gray-400 text-sm">La música como resistencia. Censura, listas negras del COMFER, y la ironía de Charly con el "Festival del Amor". Serú Girán llena estadios mientras el régimen declara al rock "subversivo".</p>
+                                    <div class="mt-4 flex justify-end gap-2">
+                                        <span class="px-3 py-1 bg-red-500/20 rounded-full text-xs text-red-400">Resistencia</span>
+                                        <span class="px-3 py-1 bg-orange-500/20 rounded-full text-xs text-orange-400">Serú Girán</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="order-1 md:order-2 flex justify-center">
+                                <div class="w-16 h-16 rounded-full bg-red-600 flex items-center justify-center z-10 border-4 border-black">
+                                    <i data-lucide="shield-alert" class="w-8 h-8 text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 1982 - Malvinas -->
+                    <div class="timeline-item" data-decade="80s">
+                        <div class="grid md:grid-cols-2 gap-8 items-center">
+                            <div class="flex justify-center">
+                                <div class="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center z-10 border-4 border-black">
+                                    <i data-lucide="radio" class="w-8 h-8 text-white"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="glass-panel p-6 rounded-2xl hover-lift cursor-pointer" onclick="showEventDetail('malvinas')">
+                                    <span class="text-blue-500 font-bold text-sm">1982</span>
+                                    <h3 class="text-2xl font-bold mt-2 mb-2">Malvinas y la Prohibición del Inglés</h3>
+                                    <p class="text-gray-400 text-sm">La prohibición de música en inglés durante la guerra abre espacios masivos para el rock nacional. León Gieco canta "Sólo le pido a Dios". El rock pasa del ghetto a la masividad.</p>
+                                    <div class="mt-4 flex gap-2">
+                                        <span class="px-3 py-1 bg-blue-500/20 rounded-full text-xs text-blue-400">León Gieco</span>
+                                        <span class="px-3 py-1 bg-green-500/20 rounded-full text-xs text-green-400">Masificación</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 1984 - Soda Stereo -->
+                    <div class="timeline-item" data-decade="80s">
+                        <div class="grid md:grid-cols-2 gap-8 items-center">
+                            <div class="md:text-right order-2 md:order-1">
+                                <div class="glass-panel p-6 rounded-2xl hover-lift cursor-pointer" onclick="showEventDetail('soda')">
+                                    <span class="text-cyan-500 font-bold text-sm">1984-1997</span>
+                                    <h3 class="text-2xl font-bold mt-2 mb-2">La Era Soda Stereo</h3>
+                                    <p class="text-gray-400 text-sm">Gustavo Cerati, Zeta Bosio y Charly Alberti llevan el rock argentino a Latinoamérica. "Signos", "Doble Vida", "Canción Animal". El sonido nueva ola y la estética moderna.</p>
+                                    <div class="mt-4 flex justify-end gap-2">
+                                        <span class="px-3 py-1 bg-cyan-500/20 rounded-full text-xs text-cyan-400">Soda Stereo</span>
+                                        <span class="px-3 py-1 bg-indigo-500/20 rounded-full text-xs text-indigo-400">Internacional</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="order-1 md:order-2 flex justify-center">
+                                <div class="w-16 h-16 rounded-full bg-cyan-600 flex items-center justify-center z-10 border-4 border-black">
+                                    <i data-lucide="globe" class="w-8 h-8 text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 1990s - Redondos -->
+                    <div class="timeline-item" data-decade="90s">
+                        <div class="grid md:grid-cols-2 gap-8 items-center">
+                            <div class="flex justify-center">
+                                <div class="w-16 h-16 rounded-full bg-yellow-600 flex items-center justify-center z-10 border-4 border-black">
+                                    <i data-lucide="crown" class="w-8 h-8 text-white"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="glass-panel p-6 rounded-2xl hover-lift cursor-pointer" onclick="showEventDetail('redondos')">
+                                    <span class="text-yellow-500 font-bold text-sm">1990s</span>
+                                    <h3 class="text-2xl font-bold mt-2 mb-2">Patricio Rey y sus Redonditos de Ricota</h3>
+                                    <p class="text-gray-400 text-sm">El Indio Solari y Skay Beilinson crean el mito. "Oktubre", "La Mosca y la Sopa". El aguante, las filas interminables, y el arte de Rocambole en las tapas. Cemento y Obras.</p>
+                                    <div class="mt-4 flex gap-2">
+                                        <span class="px-3 py-1 bg-yellow-500/20 rounded-full text-xs text-yellow-400">Redondos</span>
+                                        <span class="px-3 py-1 bg-red-500/20 rounded-full text-xs text-red-400">Culto</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2020s - Actualidad -->
+                    <div class="timeline-item" data-decade="actual">
+                        <div class="grid md:grid-cols-2 gap-8 items-center">
+                            <div class="md:text-right order-2 md:order-1">
+                                <div class="glass-panel p-6 rounded-2xl hover-lift cursor-pointer" onclick="showEventDetail('actual')">
+                                    <span class="text-green-500 font-bold text-sm">2020s</span>
+                                    <h3 class="text-2xl font-bold mt-2 mb-2">Nueva Ola Indie</h3>
+                                    <p class="text-gray-400 text-sm">Usted Señálemelo, El Mató a un Policía Motorizado, Nenagenix, Buenos Vampiros. El rock argentino muta hacia el post-punk, el indie y la fusión digital, manteniendo la esencia.</p>
+                                    <div class="mt-4 flex justify-end gap-2">
+                                        <span class="px-3 py-1 bg-green-500/20 rounded-full text-xs text-green-400">Indie</span>
+                                        <span class="px-3 py-1 bg-teal-500/20 rounded-full text-xs text-teal-400">Post-punk</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="order-1 md:order-2 flex justify-center">
+                                <div class="w-16 h-16 rounded-full bg-green-600 flex items-center justify-center z-10 border-4 border-black">
+                                    <i data-lucide="zap" class="w-8 h-8 text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Árbol Genealógico Interactivo -->
+    <section id="arbol" class="py-24 bg-white/5">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">Árbol Genealógico del Rock</h2>
+                <p class="text-gray-400 text-lg">Haz clic en un artista para ver sus conexiones y proyectos paralelos</p>
+            </div>
+
+            <div class="relative h-[600px] glass-panel rounded-3xl overflow-hidden" id="familyTreeContainer">
+                <!-- SVG Connections -->
+                <svg class="absolute inset-0 w-full h-full pointer-events-none" id="connectionsSvg">
+                    <!-- Lines will be drawn dynamically -->
+                </svg>
+
+                <!-- Nodes -->
+                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" id="charlyNode" onclick="expandNode('charly')">
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center cursor-pointer hover:scale-110 transition-transform border-4 border-white/20 shadow-2xl z-20 relative">
+                        <span class="text-xs font-bold text-center">Charly<br>García</span>
+                    </div>
+                </div>
+
+                <!-- Sui Generis -->
+                <div class="absolute top-1/4 left-1/4 transform -translate-x-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity node-connection" data-parent="charly">
+                    <div class="w-20 h-20 rounded-full bg-pink-600/80 flex items-center justify-center cursor-pointer border-2 border-pink-400">
+                        <span class="text-xs font-bold text-center">Sui<br>Generis</span>
+                    </div>
+                    <div class="text-xs text-center mt-2 text-gray-400">1972-1975</div>
+                </div>
+
+                <!-- La Máquina -->
+                <div class="absolute top-1/4 right-1/4 transform translate-x-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity node-connection" data-parent="charly">
+                    <div class="w-20 h-20 rounded-full bg-purple-600/80 flex items-center justify-center cursor-pointer border-2 border-purple-400">
+                        <span class="text-xs font-bold text-center">La Máquina<br>de Hacer<br>Pájaros</span>
+                    </div>
+                    <div class="text-xs text-center mt-2 text-gray-400">1976</div>
+                </div>
+
+                <!-- Serú Girán -->
+                <div class="absolute bottom-1/4 left-1/3 transform -translate-x-1/2 translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity node-connection" data-parent="charly">
+                    <div class="w-20 h-20 rounded-full bg-blue-600/80 flex items-center justify-center cursor-pointer border-2 border-blue-400">
+                        <span class="text-xs font-bold text-center">Serú<br>Girán</span>
+                    </div>
+                    <div class="text-xs text-center mt-2 text-gray-400">1978-1982</div>
+                </div>
+
+                <!-- Solista -->
+                <div class="absolute bottom-1/4 right-1/3 transform translate-x-1/2 translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity node-connection" data-parent="charly">
+                    <div class="w-20 h-20 rounded-full bg-red-600/80 flex items-center justify-center cursor-pointer border-2 border-red-400">
+                        <span class="text-xs font-bold text-center">Solista</span>
+                    </div>
+                    <div class="text-xs text-center mt-2 text-gray-400">1982-Actual</div>
+                </div>
+
+                <div class="absolute bottom-4 left-4 text-sm text-gray-500">
+                    <i data-lucide="info" class="w-4 h-4 inline mr-1"></i>
+                    Haz clic en Charly para ver todas las conexiones
+                </div>
+            </div>
+
+            <!-- Info Panel -->
+            <div class="mt-8 grid md:grid-cols-3 gap-6" id="treeInfoPanel">
+                <div class="glass-panel p-6 rounded-xl">
+                    <h4 class="font-bold text-pink-500 mb-2">Sui Generis</h4>
+                    <p class="text-sm text-gray-400">Dúo con Nito Mestre. Álbumes clave: "Vida" (1972), "Confesiones de Invierno" (1973). El sonido folk-rock que definió una generación.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-xl">
+                    <h4 class="font-bold text-purple-500 mb-2">Proyectos Paralelos</h4>
+                    <p class="text-sm text-gray-400">Charly participó en "Peluca Telefónica" con Spinetta, y en 1984 intentó formar un dúo con el Flaco: el proyecto "Cómo conseguir chicas".</p>
+                </div>
+                <div class="glass-panel p-6 rounded-xl">
+                    <h4 class="font-bold text-blue-500 mb-2">Serú Girán</h4>
+                    <p class="text-sm text-gray-400">Con Pedro Aznar, David Lebón y Oscar Moro. La banda que llenó Obras Sanitarias y marcó la transición a la democracia.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Geolocalización del Rock -->
+    <section id="mapa" class="py-24">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">Geolocalización del Rock</h2>
+                <p class="text-gray-400 text-lg">Lugares míticos del rock argentino en Buenos Aires y el país</p>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Mapa Interactivo -->
+                <div class="lg:col-span-2 glass-panel rounded-3xl p-8 relative min-h-[500px] overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-gray-900 to-black opacity-50"></div>
+                    
+                    <!-- Simplified BA Map -->
+                    <svg viewBox="0 0 800 600" class="w-full h-full absolute inset-0">
+                        <!-- River -->
+                        <path d="M 0,300 Q 200,280 400,300 T 800,300" stroke="#3b82f6" stroke-width="3" fill="none" opacity="0.3"/>
+                        
+                        <!-- Locations -->
+                        <g class="cursor-pointer hover:scale-110 transition-transform" onclick="showLocation('obras')">
+                            <circle cx="400" cy="250" r="8" fill="#ff006e" class="map-pin"/>
+                            <text x="400" y="230" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Obras Sanitarias</text>
+                        </g>
+                        
+                        <g class="cursor-pointer hover:scale-110 transition-transform" onclick="showLocation('laperla')">
+                            <circle cx="300" cy="350" r="6" fill="#8338ec" class="map-pin" style="animation-delay: 0.5s"/>
+                            <text x="300" y="370" text-anchor="middle" fill="white" font-size="12">La Perla de Once</text>
+                        </g>
+                        
+                        <g class="cursor-pointer hover:scale-110 transition-transform" onclick="showLocation('luna')">
+                            <circle cx="500" cy="200" r="6" fill="#3a86ff" class="map-pin" style="animation-delay: 1s"/>
+                            <text x="500" y="180" text-anchor="middle" fill="white" font-size="12">Luna Park</text>
+                        </g>
+                        
+                        <g class="cursor-pointer hover:scale-110 transition-transform" onclick="showLocation('caballito')">
+                            <circle cx="350" cy="400" r="6" fill="#06ffa5" class="map-pin" style="animation-delay: 1.5s"/>
+                            <text x="350" y="420" text-anchor="middle" fill="white" font-size="12">Casa Charly (Caballito)</text>
+                        </g>
+                        
+                        <g class="cursor-pointer hover:scale-110 transition-transform" onclick="showLocation('rivadavia')">
+                            <circle cx="280" cy="320" r="6" fill="#ffbe0b" class="map-pin" style="animation-delay: 0.3s"/>
+                            <text x="280" y="300" text-anchor="middle" fill="white" font-size="12">Avellaneda y Rivadavia</text>
+                        </g>
+                    </svg>
+
+                    <div class="absolute bottom-4 right-4 flex gap-2">
+                        <button class="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors" onclick="zoomMap(1)">
+                            <i data-lucide="plus" class="w-5 h-5"></i>
+                        </button>
+                        <button class="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors" onclick="zoomMap(-1)">
+                            <i data-lucide="minus" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Info Sidebar -->
+                <div class="space-y-4" id="locationInfo">
+                    <div class="glass-panel p-6 rounded-2xl border-l-4 border-pink-500">
+                        <h3 class="text-xl font-bold mb-2">Estadio Obras Sanitarias</h3>
+                        <p class="text-sm text-gray-400 mb-4">"El Templo del Rock" - Libertador 7395</p>
+                        <p class="text-sm text-gray-300">Inaugurado en 1978 con Serú Girán. Aquí se grabaron discos en vivo históricos y se vivieron noches épicas de Charly, Redondos y Soda.</p>
+                        <div class="mt-4 flex gap-2">
+                            <span class="text-xs px-2 py-1 bg-pink-500/20 rounded text-pink-400">Capacidad: 5,000</span>
+                            <span class="text-xs px-2 py-1 bg-white/10 rounded">Cerrado 2008-2014</span>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <h4 class="font-bold mb-4 flex items-center gap-2">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-pink-500"></i>
+                            Más Lugares
+                        </h4>
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex items-start gap-2 cursor-pointer hover:text-pink-500 transition-colors" onclick="showLocation('laperla')">
+                                <span class="w-2 h-2 bg-purple-500 rounded-full mt-1.5"></span>
+                                <div>
+                                    <strong>La Perla de Once</strong>
+                                    <p class="text-xs text-gray-500">Templo del rock setentista</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-2 cursor-pointer hover:text-pink-500 transition-colors" onclick="showLocation('cemento')">
+                                <span class="w-2 h-2 bg-yellow-500 rounded-full mt-1.5"></span>
+                                <div>
+                                    <strong>Cemento</strong>
+                                    <p class="text-xs text-gray-500">Era de los Redondos</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-2 cursor-pointer hover:text-pink-500 transition-colors" onclick="showLocation('cordoba')">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-1.5"></span>
+                                <div>
+                                    <strong>Córdoba & Rosario</strong>
+                                    <p class="text-xs text-gray-500">Escenas provincianas vibrantes</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Diccionario del Rock -->
+    <section id="diccionario" class="py-24 bg-white/5">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">Diccionario del Rock Argentino</h2>
+                <p class="text-gray-400 text-lg">El léxico único de nuestra cultura rockera</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Términos -->
+                <div class="glass-panel p-6 rounded-2xl hover-lift cursor-pointer group" onclick="showTermDetail('aguante')">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-2xl font-bold text-pink-500">El Aguante</h3>
+                        <i data-lucide="flame" class="w-6 h-6 text-pink-500 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">Concepto central de la cultura redonda. Resistencia, fidelidad inquebrantable, soportar las adversidades con dignidad.</p>
+                    <div class="text-xs text-gray-500 italic">"El aguante de la fila por las entradas"</div>
+                </div>
+
+                <div class="glass-panel p-6 rounded-2xl hover-lift cursor-pointer group" onclick="showTermDetail('zapada')">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-2xl font-bold text-purple-500">Zapada</h3>
+                        <i data-lucide="music" class="w-6 h-6 text-purple-500 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">Jam session, improvisación musical extendida. Charly García era famoso por sus zapadas en Prix D'Ami hasta el amanecer.</p>
+                    <div class="text-xs text-gray-500 italic">"Se armó una zapada en el bar"</div>
+                </div>
+
+                <div class="glass-panel p-6 rounded-2xl hover-lift cursor-pointer group" onclick="showTermDetail('gracias')">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-2xl font-bold text-blue-500">"Adiós, gracias totales"</h3>
+                        <i data-lucide="mic" class="w-6 h-6 text-blue-500 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">Frase icónica de despedida de Gustavo Cerati en el último concierto de Soda Stereo (1997), convertida en mito.</p>
+                    <div class="text-xs text-gray-500 italic">Estadio de River, 20 de septiembre de 1997</div>
+                </div>
+
+                <div class="glass-panel p-6 rounded-2xl hover-lift cursor-pointer group" onclick="showTermDetail('colimba')">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-2xl font-bold text-green-500">La Colimba</h3>
+                        <i data-lucide="shield" class="w-6 h-6 text-green-500 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">Servicio militar obligatorio. Muchos músicos (como Charly) lo mencionan como experiencia formativa o traumática.</p>
+                    <div class="text-xs text-gray-500 italic">"Salir de la colimba y formar Sui Generis"</div>
+                </div>
+
+                <div class="glass-panel p-6 rounded-2xl hover-lift cursor-pointer group" onclick="showTermDetail('carpa')">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-2xl font-bold text-yellow-500">La Carpa del Indio</h3>
+                        <i data-lucide="tent" class="w-6 h-6 text-yellow-500 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">La carpa de Patricio Rey donde se vendía merchandising en los recitales de los Redondos. Símbolo de la autogestión.</p>
+                    <div class="text-xs text-gray-500 italic">Objeto de culto para los fans</div>
+                </div>
+
+                <div class="glass-panel p-6 rounded-2xl hover-lift cursor-pointer group" onclick="showTermDetail('quilombo')">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-2xl font-bold text-red-500">Quilombo</h3>
+                        <i data-lucide="alert-triangle" class="w-6 h-6 text-red-500 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">Desorden, fiesta intensa, problemas. Término con connotaciones históricas fuertes, resignificado en el lunfardo.</p>
+                    <div class="text-xs text-gray-500 italic">"Se armó un quilombo en el recital"</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Galería de Vinilos y Arte -->
+    <section id="vinilos" class="py-24">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">Arte de Tapas</h2>
+                <p class="text-gray-400 text-lg">El diseño gráfico como parte esencial del rock nacional</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Album 1 -->
+                <div class="group relative aspect-square rounded-2xl overflow-hidden cursor-pointer" onclick="showAlbumDetail('artaud')">
+                    <div class="absolute inset-0 bg-gradient-to-br from-purple-900 to-black"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <span class="text-6xl font-bold opacity-20">ARTAUD</span>
+                    </div>
+                    <div class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 text-center">
+                        <h4 class="text-xl font-bold text-purple-400 mb-2">Artaud (1973)</h4>
+                        <p class="text-sm text-gray-300">Pescado Rabioso</p>
+                        <p class="text-xs text-gray-500 mt-2">Obra maestra de Spinetta inspirada en el poeta francés Antonin Artaud</p>
+                    </div>
+                </div>
+
+                <!-- Album 2 -->
+                <div class="group relative aspect-square rounded-2xl overflow-hidden cursor-pointer" onclick="showAlbumDetail('oktubre')">
+                    <div class="absolute inset-0 bg-gradient-to-br from-red-900 to-black"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <span class="text-5xl font-bold opacity-20 text-red-500">OKTUBRE</span>
+                    </div>
+                    <div class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 text-center">
+                        <h4 class="text-xl font-bold text-red-400 mb-2">Oktubre (1986)</h4>
+                        <p class="text-sm text-gray-300">Patricio Rey y sus Redonditos</p>
+                        <p class="text-xs text-gray-500 mt-2">Arte de Rocambole. Estética surrealista y obrera</p>
+                    </div>
+                </div>
+
+                <!-- Album 3 -->
+                <div class="group relative aspect-square rounded-2xl overflow-hidden cursor-pointer" onclick="showAlbumDetail('cancion')">
+                    <div class="absolute inset-0 bg-gradient-to-br from-cyan-900 to-black"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <span class="text-4xl font-bold opacity-20 text-cyan-400">CANCIÓN<br>ANIMAL</span>
+                    </div>
+                    <div class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 text-center">
+                        <h4 class="text-xl font-bold text-cyan-400 mb-2">Canción Animal (1990)</h4>
+                        <p class="text-sm text-gray-300">Soda Stereo</p>
+                        <p class="text-xs text-gray-500 mt-2">Diseño icónico de la era MTV latina</p>
+                    </div>
+                </div>
+
+                <!-- Album 4 -->
+                <div class="group relative aspect-square rounded-2xl overflow-hidden cursor-pointer" onclick="showAlbumDetail('peluson')">
+                    <div class="absolute inset-0 bg-gradient-to-br from-yellow-900 to-black"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <span class="text-4xl font-bold opacity-20 text-yellow-500">EL<br>PELUSON</span>
+                    </div>
+                    <div class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 text-center">
+                        <h4 class="text-xl font-bold text-yellow-400 mb-2">El Pelusón of Milk (1999)</h4>
+                        <p class="text-sm text-gray-300">Divididos</p>
+                        <p class="text-xs text-gray-500 mt-2">Arte pop y surrealismo argentino</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rocambole Section -->
+            <div class="mt-16 glass-panel rounded-3xl p-8 md:p-12">
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-3xl font-bold mb-4">Rocambole: El Artista del Rock</h3>
+                        <p class="text-gray-400 mb-6">
+                            Roberto "Rocambole" Sánchez fue el artista visual detrás de las tapas más icónicas de los Redondos. Su estilo mezcla el arte religioso, la iconografía obrera y el surrealismo para crear imágenes que son tan importantes como la música misma.
+                        </p>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check" class="w-4 h-4 text-pink-500"></i>
+                                "Gulp!" (1985) - Primera tapa icónica
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check" class="w-4 h-4 text-pink-500"></i>
+                                "Oktubre" (1986) - Estética de guerra y amor
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="check" class="w-4 h-4 text-pink-500"></i>
+                                "La Mosca y la Sopa" (1991) - Collage psicodélico
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="relative h-64 rounded-2xl overflow-hidden bg-gradient-to-br from-purple-900 to-red-900 flex items-center justify-center">
+                        <div class="text-center">
+                            <i data-lucide="palette" class="w-16 h-16 mx-auto mb-4 opacity-50"></i>
+                            <p class="text-lg font-bold">"El arte es la mosca en la sopa de la sociedad"</p>
+                            <p class="text-sm text-gray-400 mt-2">- Rocambole</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rincón del Coleccionista -->
+    <section id="coleccionista" class="py-24 bg-white/5">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">El Rincón del Coleccionista</h2>
+                <p class="text-gray-400 text-lg">Memorabilia, entradas y relatos de la comunidad</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <!-- Upload CTA -->
+                <div class="md:col-span-1 glass-panel rounded-2xl p-8 border-2 border-dashed border-pink-500/30 flex flex-col items-center justify-center text-center">
+                    <i data-lucide="camera" class="w-12 h-12 text-pink-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Compartí tu historia</h3>
+                    <p class="text-sm text-gray-400 mb-6">Subí fotos de tus entradas, remeras de recitales o historias de zapadas</p>
+                    <button onclick="alert('Función de upload simulada - en producción permitiría subir imágenes')" class="bg-pink-600 hover:bg-pink-700 px-6 py-3 rounded-full text-sm font-bold transition-all w-full">
+                        Subir Foto
+                    </button>
+                </div>
+
+                <!-- Community Posts -->
+                <div class="md:col-span-2 grid gap-4">
+                    <div class="glass-panel p-4 rounded-xl flex gap-4 items-start">
+                        <div class="w-16 h-16 bg-gradient-to-br from-yellow-600 to-orange-600 rounded-lg flex-shrink-0 flex items-center justify-center">
+                            <i data-lucide="ticket" class="w-8 h-8"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start mb-1">
+                                <h4 class="font-bold">Entrada Obras '94 - Charly</h4>
+                                <span class="text-xs text-gray-500">hace 2 horas</span>
+                            </div>
+                            <p class="text-sm text-gray-400 mb-2">Mi primera vez viendo a Charly. Tocó "Los Dinosaurios" y fue épico. La entrada la guardo en un marco.</p>
+                            <div class="flex gap-2">
+                                <button class="text-xs flex items-center gap-1 text-pink-500 hover:text-pink-400">
+                                    <i data-lucide="heart" class="w-3 h-3"></i> 24
+                                </button>
+                                <button class="text-xs flex items-center gap-1 text-gray-500 hover:text-gray-400">
+                                    <i data-lucide="message-circle" class="w-3 h-3"></i> 3
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-4 rounded-xl flex gap-4 items-start">
+                        <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex-shrink-0 flex items-center justify-center">
+                            <i data-lucide="shirt" class="w-8 h-8"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start mb-1">
+                                <h4 class="font-bold">Remera de Soda '97</h4>
+                                <span class="text-xs text-gray-500">hace 5 horas</span>
+                            </div>
+                            <p class="text-sm text-gray-400 mb-2">La remera del último recital en River. La tengo guardada como oro, aunque ya no me entra 😅</p>
+                            <div class="flex gap-2">
+                                <button class="text-xs flex items-center gap-1 text-pink-500 hover:text-pink-400">
+                                    <i data-lucide="heart" class="w-3 h-3"></i> 156
+                                </button>
+                                <button class="text-xs flex items-center gap-1 text-gray-500 hover:text-gray-400">
+                                    <i data-lucide="message-circle" class="w-3 h-3"></i> 12
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rankings -->
+            <div class="glass-panel rounded-3xl p-8">
+                <h3 class="text-2xl font-bold mb-6 text-center">Rankings de la Gente</h3>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div>
+                        <h4 class="font-bold text-pink-500 mb-4 flex items-center gap-2">
+                            <i data-lucide="guitar" class="w-4 h-4"></i>
+                            Mejor Solo de Guitarra
+                        </h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex justify-between items-center p-2 bg-white/5 rounded">
+                                <span>1. "Canción para mi muerte" (Sui Generis)</span>
+                                <span class="text-gray-500">32%</span>
+                            </li>
+                            <li class="flex justify-between items-center p-2 bg-white/5 rounded">
+                                <span>2. "Mariposa Pontiac" (Spinetta)</span>
+                                <span class="text-gray-500">28%</span>
+                            </li>
+                            <li class="flex justify-between items-center p-2 bg-white/5 rounded">
+                                <span>3. "De Música Ligera" (Soda)</span>
+                                <span class="text-gray-500">24%</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-purple-500 mb-4 flex items-center gap-2">
+                            <i data-lucide="music" class="w-4 h-4"></i>
+                            Mejor Letra para Llorar
+                        </h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex justify-between items-center p-2 bg-white/5 rounded">
+                                <span>1. "Canción para mi muerte"</span>
+                                <span class="text-gray-500">45%</span>
+                            </li>
+                            <li class="flex justify-between items-center p-2 bg-white/5 rounded">
+                                <span>2. "Bajan" (Pescado Rabioso)</span>
+                                <span class="text-gray-500">30%</span>
+                            </li>
+                            <li class="flex justify-between items-center p-2 bg-white/5 rounded">
+                                <span>3. "Seminare" (Serú Girán)</span>
+                                <span class="text-gray-500">15%</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-blue-500 mb-4 flex items-center gap-2">
+                            <i data-lucide="disc" class="w-4 h-4"></i>
+                            Mejor Disco en Vivo
+                        </h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex justify-between items-center p-2 bg-white/5 rounded">
+                                <span>1. "En el Ópera" (Soda)</span>
+                                <span class="text-gray-500">38%</span>
+                            </li>
+                            <li class="flex justify-between items-center p-2 bg-white/5 rounded">
+                                <span>2. "Obras Cumbres" (Redondos)</span>
+                                <span class="text-gray-500">35%</span>
+                            </li>
+                            <li class="flex justify-between items-center p-2 bg-white/5 rounded">
+                                <span>3. "El Vivo" (Serú Girán)</span>
+                                <span class="text-gray-500">20%</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep Dive: Letras Analizadas -->
+    <section class="py-24">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">Letras Analizadas</h2>
+                <p class="text-gray-400 text-lg">Contexto político y significado oculto</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="glass-panel rounded-2xl p-8 border-l-4 border-red-500">
+                    <div class="flex items-center gap-2 mb-4 text-red-400 text-sm font-bold">
+                        <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                        ÉPOCA: DICTADURA (1976-1983)
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">"Desarma y Sangra" - Serú Girán</h3>
+                    <blockquote class="text-lg italic text-gray-300 mb-4 border-l-2 border-gray-600 pl-4">
+                        "El ángel vigía descubre al ladrón,<br>
+                        le corta las manos,<br>
+                        le quita la voz..."
+                    </blockquote>
+                    <p class="text-sm text-gray-400 mb-4">
+                        <strong>Análisis:</strong> Charly García utiliza metáforas bíblicas para describir la censura militar. El "ángel vigía" representa a los censores del COMFER que controlaban las letras. La canción fue incluida en el álbum "Bicicleta" (1980).
+                    </p>
+                    <div class="text-xs text-gray-500">
+                        Contexto: Lista negra de 242 temas prohibidos por el régimen militar.
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-2xl p-8 border-l-4 border-yellow-500">
+                    <div class="flex items-center gap-2 mb-4 text-yellow-400 text-sm font-bold">
+                        <i data-lucide="feather" class="w-4 h-4"></i>
+                        METÁFORAS IMPOSIBLES
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">"Barro Tal Vez" - Spinetta</h3>
+                    <blockquote class="text-lg italic text-gray-300 mb-4 border-l-2 border-gray-600 pl-4">
+                        "Amor, barro tal vez,<br>
+                        mariposa pontiac,<br>
+                        rosa venenosa..."
+                    </blockquote>
+                    <p class="text-sm text-gray-400 mb-4">
+                        <strong>Análisis:</strong> Spinetta utiliza el surrealismo como forma de escapar de la censura. Las imágenes oníricas ("mariposa pontiac") evaden el control ideológico mientras transmiten emociones profundas sobre el amor y la pérdida.
+                    </p>
+                    <div class="text-xs text-gray-500">
+                        Técnica: Las metáforas abstractas eran más difíciles de censurar que las descripciones directas.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-white/10 py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i data-lucide="disc" class="w-6 h-6 text-pink-500"></i>
+                        <span class="font-display text-xl font-bold">RockArgento</span>
+                    </div>
+                    <p class="text-sm text-gray-500">
+                        Celebrando la historia y el presente del rock nacional argentino.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Secciones</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#timeline" class="hover:text-pink-500 transition-colors">Línea de Tiempo</a></li>
+                        <li><a href="#arbol" class="hover:text-pink-500 transition-colors">Árbol Genealógico</a></li>
+                        <li><a href="#mapa" class="hover:text-pink-500 transition-colors">Mapa</a></li>
+                        <li><a href="#diccionario" class="hover:text-pink-500 transition-colors">Diccionario</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Comunidad</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#coleccionista" class="hover:text-pink-500 transition-colors">Coleccionistas</a></li>
+                        <li><a href="#" class="hover:text-pink-500 transition-colors">Rankings</a></li>
+                        <li><a href="#" class="hover:text-pink-500 transition-colors">Foros</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Nuevas Olas</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li>Usted Señálemelo</li>
+                        <li>El Mató a un Policía Motorizado</li>
+                        <li>Nenagenix</li>
+                        <li>Buenos Vampiros</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-white/10 pt-8 text-center text-sm text-gray-600">
+                <p>© 2024 RockArgento - Homenaje al Rock Nacional. Sin fines comerciales.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal Generator -->
+    <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="glass-panel rounded-3xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-full transition-colors">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Timeline Filter
+        function filterTimeline(decade) {
+            const items = document.querySelectorAll('.timeline-item');
+            const buttons = document.querySelectorAll('.decade-btn');
+            
+            buttons.forEach(btn => {
+                if (btn.dataset.decade === decade) {
+                    btn.classList.add('bg-white/20', 'border-pink-500', 'text-pink-500');
+                } else {
+                    btn.classList.remove('bg-white/20', 'border-pink-500', 'text-pink-500');
+                }
+            });
+
+            items.forEach(item => {
+                if (decade === 'all' || item.dataset.decade === decade) {
+                    item.style.display = 'block';
+                    item.style.opacity = '0';
+                    setTimeout(() => {
+                        item.style.opacity = '1';
+                        item.style.transition = 'opacity 0.5s ease';
+                    }, 50);
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Family Tree Interactions
+        let currentNode = null;
+        
+        function expandNode(artist) {
+            const connections = document.querySelectorAll('.node-connection');
+            const svg = document.getElementById('connectionsSvg');
+            
+            if (currentNode === artist) {
+                // Collapse
+                connections.forEach(conn => {
+                    conn.style.opacity = '0.5';
+                });
+                svg.innerHTML = '';
+                currentNode = null;
+            } else {
+                // Expand
+                currentNode = artist;
+                connections.forEach(conn => {
+                    if (conn.dataset.parent === artist) {
+                        conn.style.opacity = '1';
+                        conn.style.transform = conn.style.transform + ' scale(1.1)';
+                    } else {
+                        conn.style.opacity = '0.3';
+                    }
+                });
+                
+                // Draw connection lines (simplified)
+                svg.innerHTML = `
+                    <line x1="50%" y1="50%" x2="25%" y2="25%" stroke="#ff006e" stroke-width="2" class="connection-line" opacity="0.5"/>
+                    <line x1="50%" y1="50%" x2="75%" y2="25%" stroke="#8338ec" stroke-width="2" class="connection-line" opacity="0.5"/>
+                    <line x1="50%" y1="50%" x2="33%" y2="75%" stroke="#3a86ff" stroke-width="2" class="connection-line" opacity="0.5"/>
+                    <line x1="50%" y1="50%" x2="66%" y2="75%" stroke="#ef4444" stroke-width="2" class="connection-line" opacity="0.5"/>
+                `;
+            }
+        }
+
+        // Map Interactions
+        function showLocation(location) {
+            const info = {
+                'obras': {
+                    title: 'Estadio Obras Sanitarias',
+                    content: 'El "Templo del Rock" inaugurado el 3 de noviembre de 1978 con Serú Girán. Capacidad para 5,000 personas. Aquí se grabaron los discos en vivo más importantes de Charly García y los Redondos.',
+                    extra: 'Dirección: Av. del Libertador 7395, CABA'
+                },
+                'laperla': {
+                    title: 'La Perla de Once',
+                    content: 'Bar emblemático de la década del 70 ubicado en la esquina de Rivadavia y Jujuy. Punto de encuentro de músicos y público. Hoy ya no existe en su forma original, pero queda en la memoria colectiva.',
+                    extra: 'Esquina histórica del rock setentista'
+                },
+                'luna': {
+                    title: 'Luna Park',
+                    content: 'Estadio cubierto donde ocurrieron momentos históricos como el "Festival del Amor" de Charly García en 1977 (irónico desafío a la dictadura) y miles de recitales míticos.',
+                    extra: 'Bouchard 465, CABA'
+                },
+                'caballito': {
+                    title: 'Casa de Charly García',
+                    content: 'Charly nació en José María Moreno 63, Caballito, y vivió en el quinto piso. También estudió en el Instituto Social Militar Dámaso Centeno (Rivadavia 5550) donde conoció a Nito Mestre.',
+                    extra: 'Barrio de Caballito'
+                },
+                'rivadavia': {
+                    title: 'Avellaneda y Rivadavia',
+                    content: 'Esquina mítica del rock argentino, inmortalizada en canciones y recuerdos. Lugar de encuentro y desencuentro de generaciones.',
+                    extra: 'Esquina simbólica'
+                },
+                'cemento': {
+                    title: 'Cemento',
+                    content: 'Discoteca de la década del 90 donde los Redondos y otras bandas del under tocaron sus mejores shows. Símbolo de la era del "aguante".',
+                    extra: 'Era de los 90s'
+                },
+                'cordoba': {
+                    title: 'Córdoba y Rosario',
+                    content: 'Escenas provincianas fundamentales. Córdoba con su propio under y Rosario cuna de Fito Páez y Litto Nebbia (aunque este último se formó en Buenos Aires).',
+                    extra: 'Escenas del interior'
+                }
+            };
+
+            const data = info[location];
+            if (data) {
+                document.getElementById('locationInfo').innerHTML = `
+                    <div class="glass-panel p-6 rounded-2xl border-l-4 border-pink-500 animate-pulse">
+                        <h3 class="text-xl font-bold mb-2">${data.title}</h3>
+                        <p class="text-sm text-gray-400 mb-4">${data.extra}</p>
+                        <p class="text-gray-300">${data.content}</p>
+                    </div>
+                    <div class="glass-panel p-6 rounded-2xl mt-4">
+                        <h4 class="font-bold mb-4 flex items-center gap-2">
+                            <i data-l
